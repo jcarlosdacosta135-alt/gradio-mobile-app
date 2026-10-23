@@ -6,7 +6,6 @@ import '../services/saved_files_database.dart';
 import '../services/file_storage_service.dart';
 import 'file_viewer_screen.dart';
 import 'gradio_webview_screen.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 class OutputsScreen extends StatefulWidget {
   const OutputsScreen({super.key});
@@ -71,8 +70,8 @@ class _OutputsScreenState extends State<OutputsScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'Saved Files',
-          style: GoogleFonts.sourceSans3(
+          'Arquivos salvos',
+          style: TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.w700,
             color: Colors.black87,
@@ -97,7 +96,7 @@ class _OutputsScreenState extends State<OutputsScreen> {
                   children: [
                     Icon(Icons.storage),
                     SizedBox(width: 8),
-                    Text('Storage Info'),
+                    Text('Armazenamento'),
                   ],
                 ),
               ),
@@ -107,7 +106,7 @@ class _OutputsScreenState extends State<OutputsScreen> {
                   children: [
                     Icon(Icons.clear_all, color: Colors.red),
                     SizedBox(width: 8),
-                    Text('Clear All', style: TextStyle(color: Colors.red)),
+                    Text('Excluir tudo', style: TextStyle(color: Colors.red)),
                   ],
                 ),
               ),
@@ -127,7 +126,7 @@ class _OutputsScreenState extends State<OutputsScreen> {
                   });
                 },
                 decoration: InputDecoration(
-                  hintText: 'Search files...',
+                  hintText: 'Pesquisar arquivos...',
                   hintStyle: TextStyle(color: Colors.grey[400]),
                   prefixIcon: Icon(Icons.search, color: Colors.grey[400]),
                   border: OutlineInputBorder(
@@ -195,12 +194,12 @@ class _OutputsScreenState extends State<OutputsScreen> {
 
   String _getFileTypeLabel(String fileType) {
     switch (fileType) {
-      case 'all': return 'All';
-      case 'image': return 'Images';
-      case 'audio': return 'Audio';
-      case 'video': return 'Videos';
-      case 'document': return 'Documents';
-      case 'data': return 'Data';
+      case 'all': return 'Todos';
+      case 'image': return 'Imagens';
+      case 'audio': return 'Áudio';
+      case 'video': return 'Vídeos';
+      case 'document': return 'Documentos';
+      case 'data': return 'Dados';
       default: return fileType;
     }
   }
@@ -228,14 +227,14 @@ class _OutputsScreenState extends State<OutputsScreen> {
           ),
           SizedBox(height: 20),
           Text(
-            'No Saved Files Yet',
+            'Nenhum arquivo salvo',
             style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
           ),
           SizedBox(height: 10),
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 32),
             child: Text(
-              'Use Gradio apps and download files to save them here for offline access.',
+              'Use os aplicativos Gradio e baixe os resultados para acessá-los aqui mesmo sem internet.',
               style: TextStyle(fontSize: 16, color: Colors.grey),
               textAlign: TextAlign.center,
             ),
@@ -257,12 +256,12 @@ class _OutputsScreenState extends State<OutputsScreen> {
           ),
           const SizedBox(height: 20),
           const Text(
-            'No Results Found',
+            'Nenhum resultado encontrado',
             style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 10),
           Text(
-            'No files match your search criteria',
+            'Nenhum arquivo corresponde à pesquisa',
             style: const TextStyle(fontSize: 16, color: Colors.grey),
           ),
         ],
@@ -514,16 +513,16 @@ class _OutputsScreenState extends State<OutputsScreen> {
       showDialog(
         context: context,
         builder: (context) => AlertDialog(
-          title: const Text('Storage Information'),
+          title: const Text('Informações de armazenamento'),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('Total files: $fileCount'),
+              Text('Total de arquivos: $fileCount'),
               const SizedBox(height: 8),
               Text(storageInfo),
               const SizedBox(height: 16),
-              const Text('Files by type:', style: TextStyle(fontWeight: FontWeight.bold)),
+              const Text('Arquivos por tipo:', style: TextStyle(fontWeight: FontWeight.bold)),
               const SizedBox(height: 8),
               ...fileCountsByType.entries.map((entry) =>
                 Text('${_getFileTypeLabel(entry.key)}: ${entry.value}')
@@ -533,7 +532,7 @@ class _OutputsScreenState extends State<OutputsScreen> {
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: const Text('Close'),
+              child: const Text('Fechar'),
             ),
           ],
         ),
@@ -545,14 +544,14 @@ class _OutputsScreenState extends State<OutputsScreen> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Clear All Files'),
+        title: const Text('Excluir todos os arquivos'),
         content: const Text(
-          'Are you sure you want to delete all saved files? This action cannot be undone.',
+          'Deseja excluir todos os arquivos salvos? Esta ação não pode ser desfeita.',
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Cancel'),
+            child: const Text('Cancelar'),
           ),
           TextButton(
             onPressed: () async {
@@ -563,7 +562,7 @@ class _OutputsScreenState extends State<OutputsScreen> {
               if (mounted) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(
-                    content: Text('All files cleared'),
+                    content: Text('Todos os arquivos foram excluídos'),
                     backgroundColor: Colors.green,
                   ),
                 );
@@ -571,7 +570,7 @@ class _OutputsScreenState extends State<OutputsScreen> {
 
               _loadSavedFiles();
             },
-            child: const Text('Clear All', style: TextStyle(color: Colors.red)),
+            child: const Text('Excluir tudo', style: TextStyle(color: Colors.red)),
           ),
         ],
       ),

@@ -62,17 +62,17 @@ class HuggingFaceService {
 
         return result;
       } else {
-        throw Exception('Failed to load spaces: ${response.statusCode}');
+        throw Exception('Falha ao carregar Spaces: ${response.statusCode}');
       }
     } catch (e) {
-      throw Exception('Error fetching spaces: $e');
+      throw Exception('Erro ao consultar Spaces: $e');
     }
   }
 
   static Future<List<HuggingFaceSpace>> searchSpaces(String query) async {
     try {
       final response = await http.get(
-        Uri.parse('$baseUrl?search=$query&sort=likes&direction=-1&limit=20&filter=gradio&full=true'),
+        Uri.parse('$baseUrl?search=${Uri.encodeQueryComponent(query)}&sort=likes&direction=-1&limit=20&filter=gradio&full=true'),
         headers: {'Accept': 'application/json'},
       );
 
@@ -80,10 +80,10 @@ class HuggingFaceService {
         final List<dynamic> data = json.decode(response.body);
         return data.map((json) => HuggingFaceSpace.fromJson(json)).toList();
       } else {
-        throw Exception('Failed to search spaces: ${response.statusCode}');
+        throw Exception('Falha ao pesquisar Spaces: ${response.statusCode}');
       }
     } catch (e) {
-      throw Exception('Error searching spaces: $e');
+      throw Exception('Erro ao pesquisar Spaces: $e');
     }
   }
 
@@ -101,12 +101,12 @@ class HuggingFaceService {
         // It's valid for a user to have no Gradio spaces, return empty list
         return gradioSpaces;
       } else if (response.statusCode == 404) {
-        throw Exception('User "$username" not found');
+        throw Exception('Usuário "$username" não encontrado');
       } else {
-        throw Exception('Failed to fetch spaces for user "$username": ${response.statusCode}');
+        throw Exception('Falha ao consultar Spaces de "$username": ${response.statusCode}');
       }
     } catch (e) {
-      throw Exception('Error fetching spaces: $e');
+      throw Exception('Erro ao consultar Spaces: $e');
     }
   }
 
@@ -142,10 +142,10 @@ class HuggingFaceService {
 
         return result;
       } else {
-        throw Exception('Failed to load spaces: ${response.statusCode}');
+        throw Exception('Falha ao carregar Spaces: ${response.statusCode}');
       }
     } catch (e) {
-      throw Exception('Error fetching spaces by type: $e');
+      throw Exception('Erro ao consultar Spaces por categoria: $e');
     }
   }
 
@@ -202,10 +202,10 @@ class HuggingFaceService {
           'nextPageUrl': nextPageUrl,
         };
       } else {
-        throw Exception('Failed to load spaces: ${response.statusCode}');
+        throw Exception('Falha ao carregar Spaces: ${response.statusCode}');
       }
     } catch (e) {
-      throw Exception('Error fetching spaces by type: $e');
+      throw Exception('Erro ao consultar Spaces por categoria: $e');
     }
   }
 
@@ -350,10 +350,10 @@ class HuggingFaceService {
 
         return sortedTags;
       } else {
-        throw Exception('Failed to fetch tags: ${response.statusCode}');
+        throw Exception('Falha ao consultar etiquetas: ${response.statusCode}');
       }
     } catch (e) {
-      throw Exception('Error fetching popular tags: $e');
+      throw Exception('Erro ao consultar etiquetas populares: $e');
     }
   }
 
@@ -373,7 +373,7 @@ class HuggingFaceService {
 
       return suggestedTags;
     } catch (e) {
-      throw Exception('Error getting suggested categories: $e');
+      throw Exception('Erro ao consultar categorias sugeridas: $e');
     }
   }
 }

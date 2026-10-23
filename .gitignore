@@ -56,3 +56,8 @@ android/key.properties
 android/app/upload-keystore.jks
 *.jks
 *.keystore
+
+# Configuração e assinatura locais
+android/key.properties
+**/*.jks
+**/*.keystore

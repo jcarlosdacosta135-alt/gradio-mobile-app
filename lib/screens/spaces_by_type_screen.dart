@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import '../models/huggingface_space.dart';
 import '../models/space_type.dart';
 import '../services/huggingface_service.dart';
@@ -53,8 +52,8 @@ class _SpacesByTypeScreenState extends State<SpacesByTypeScreen> {
           borderRadius: BorderRadius.circular(16),
         ),
         title: Text(
-          'Sort by',
-          style: GoogleFonts.sourceSans3(
+          'Ordenar por',
+          style: TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.w600,
             color: Colors.black87,
@@ -63,11 +62,11 @@ class _SpacesByTypeScreenState extends State<SpacesByTypeScreen> {
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            _buildSortOption(context, 'likes', 'Most liked', Icons.favorite),
+            _buildSortOption(context, 'likes', 'Mais curtidos', Icons.favorite),
             const SizedBox(height: 8),
-            _buildSortOption(context, 'recent', 'Recently updated', Icons.schedule),
+            _buildSortOption(context, 'recent', 'Atualizados recentemente', Icons.schedule),
             const SizedBox(height: 8),
-            _buildSortOption(context, 'name', 'Name A–Z', Icons.sort_by_alpha),
+            _buildSortOption(context, 'name', 'Nome A–Z', Icons.sort_by_alpha),
           ],
         ),
       ),
@@ -107,7 +106,7 @@ class _SpacesByTypeScreenState extends State<SpacesByTypeScreen> {
             Expanded(
               child: Text(
                 label,
-                style: GoogleFonts.sourceSans3(
+                style: TextStyle(
                   fontSize: 16,
                   fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
                   color: isSelected ? Colors.blue : Colors.black87,
@@ -204,13 +203,13 @@ class _SpacesByTypeScreenState extends State<SpacesByTypeScreen> {
     final difference = now.difference(lastModified);
 
     if (difference.inDays > 0) {
-      return '${difference.inDays}d ago';
+      return 'há ${difference.inDays} d';
     } else if (difference.inHours > 0) {
-      return '${difference.inHours}h ago';
+      return 'há ${difference.inHours} h';
     } else if (difference.inMinutes > 0) {
-      return '${difference.inMinutes}m ago';
+      return 'há ${difference.inMinutes} min';
     } else {
-      return 'just now';
+      return 'agora mesmo';
     }
   }
 
@@ -239,7 +238,7 @@ class _SpacesByTypeScreenState extends State<SpacesByTypeScreen> {
             Expanded(
               child: Text(
                 widget.spaceType.name,
-                style: GoogleFonts.sourceSans3(
+                style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.w700,
                   color: Colors.black87,
@@ -264,11 +263,11 @@ class _SpacesByTypeScreenState extends State<SpacesByTypeScreen> {
                     children: [
                       const Icon(Icons.error, size: 64, color: Colors.red),
                       const SizedBox(height: 16),
-                      Text('Error: $error'),
+                      Text('Erro: $error'),
                       const SizedBox(height: 16),
                       ElevatedButton(
                         onPressed: loadSpacesByType,
-                        child: const Text('Retry'),
+                        child: const Text('Tentar novamente'),
                       ),
                     ],
                   ),
@@ -285,12 +284,12 @@ class _SpacesByTypeScreenState extends State<SpacesByTypeScreen> {
                           ),
                           const SizedBox(height: 16),
                           Text(
-                            'No ${widget.spaceType.name.toLowerCase()} spaces found',
+                            'Nenhum Space de ${widget.spaceType.name.toLowerCase()} encontrado',
                             style: const TextStyle(fontSize: 18),
                           ),
                           const SizedBox(height: 8),
                           Text(
-                            'Try again later as new spaces are added regularly',
+                            'Tente novamente mais tarde. Novos Spaces são adicionados regularmente.',
                             style: TextStyle(
                               color: Colors.grey[600],
                             ),

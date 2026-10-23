@@ -1,6 +1,4 @@
 import 'dart:convert';
-import 'dart:math';
-import 'package:crypto/crypto.dart';
 import 'package:flutter_appauth/flutter_appauth.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
@@ -51,25 +49,15 @@ class HFOAuthService {
     ),
   );
 
+  static const String _sessionTokenKey = 'hf_session_token';
   static const String _accessTokenKey = 'hf_access_token';
   static const String _refreshTokenKey = 'hf_refresh_token';
   static const String _userDataKey = 'hf_user_data';
 
-  static String _generateCodeVerifier() {
-    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~';
-    final random = Random.secure();
-    return List.generate(128, (_) => chars[random.nextInt(chars.length)]).join();
-  }
-
-  static String _generateCodeChallenge(String verifier) {
-    final bytes = utf8.encode(verifier);
-    final digest = sha256.convert(bytes);
-    return base64Url.encode(digest.bytes).replaceAll('=', '');
-  }
-
   static Future<bool> isAuthenticated() async {
     final accessToken = await _secureStorage.read(key: _accessTokenKey);
-    return accessToken != null && accessToken.isNotEmpty;
+    final session = await _secureStorage.read(key: _sessionTokenKey);
+    return (accessToken?.isNotEmpty ?? false) || (session?.isNotEmpty ?? false);
   }
 
   static Future<HuggingFaceUser?> getCachedUser() async {
@@ -80,14 +68,13 @@ class HFOAuthService {
         return HuggingFaceUser.fromJson(userData);
       }
     } catch (e) {
-      print('Error reading cached user data: $e');
+
     }
     return null;
   }
 
   static Future<HuggingFaceUser?> login() async {
     try {
-      print('Starting OAuth login with redirect URI: $_redirectUri');
 
       final AuthorizationTokenRequest request = AuthorizationTokenRequest(
         _clientId,
@@ -100,15 +87,12 @@ class HFOAuthService {
         allowInsecureConnections: false,
       );
 
-      print('Calling authorizeAndExchangeCode...');
       final AuthorizationTokenResponse? result = await _appAuth.authorizeAndExchangeCode(request);
-      print('Authorization completed, result: ${result != null ? "success" : "null"}');
 
       if (result != null && result.accessToken != null) {
-        print('OAuth success! Token type: ${result.tokenType}');
-        print('Access token length: ${result.accessToken!.length}');
-        print('Token expires in: ${result.accessTokenExpirationDateTime}');
-        print('Scopes: ${result.scopes}');
+
+
+
 
         final user = await _fetchUserInfo(result.accessToken!);
         if (user != null) {
@@ -118,84 +102,27 @@ class HFOAuthService {
           }
           await _cacheUserData(user);
 
-          await HFCookieManager.setHFAuthCookie(result.accessToken!);
+
 
           return user;
         } else {
-          print('Failed to fetch user info - not saving credentials');
-          throw Exception('Failed to validate user information');
+
+          throw Exception('Não foi possível validar os dados do usuário');
         }
       } else {
-        print('OAuth failed: No access token received');
-        throw Exception('No access token received from OAuth provider');
+
+        throw Exception('O serviço de autenticação não retornou um token');
       }
     } catch (e) {
-      print('OAuth login error: $e');
+
       await _secureStorage.deleteAll();
-      throw Exception('Login failed: $e');
+      throw Exception('Falha no login: $e');
     }
   }
 
-  /// Exchange authorization code for access token (used by webview OAuth flow)
-  static Future<HuggingFaceUser?> exchangeCodeForToken(String code, String redirectUri) async {
-    try {
-      print('Exchanging authorization code for token...');
-
-      final response = await http.post(
-        Uri.parse(_tokenEndpoint),
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: {
-          'grant_type': 'authorization_code',
-          'client_id': _clientId,
-          'code': code,
-          'redirect_uri': redirectUri,
-        },
-      );
-
-      print('Token exchange response status: ${response.statusCode}');
-
-      if (response.statusCode == 200) {
-        final tokenData = json.decode(response.body);
-        final accessToken = tokenData['access_token'];
-        final refreshToken = tokenData['refresh_token'];
-
-        if (accessToken != null) {
-          print('Token exchange successful');
-
-          // Fetch user info
-          final user = await _fetchUserInfo(accessToken);
-
-          if (user != null) {
-            // Save credentials
-            await _secureStorage.write(key: _accessTokenKey, value: accessToken);
-            if (refreshToken != null) {
-              await _secureStorage.write(key: _refreshTokenKey, value: refreshToken);
-            }
-            await _cacheUserData(user);
-
-            // Set cookie for webviews
-            await HFCookieManager.setHFAuthCookie(accessToken);
-
-            return user;
-          }
-        }
-      } else {
-        print('Token exchange failed: ${response.body}');
-      }
-
-      return null;
-    } catch (e) {
-      print('Error exchanging code for token: $e');
-      return null;
-    }
-  }
-
-  /// Login using an existing token (from webview cookies)
+  /// Login using an OAuth access token.
   static Future<HuggingFaceUser?> loginWithToken(String token) async {
     try {
-      print('Logging in with token from cookies...');
 
       // Fetch user info using the token
       final user = await _fetchUserInfo(token);
@@ -205,35 +132,30 @@ class HFOAuthService {
         await _secureStorage.write(key: _accessTokenKey, value: token);
         await _cacheUserData(user);
 
-        // Set cookie for webviews
-        await HFCookieManager.setHFAuthCookie(token);
 
-        print('Login with token successful: ${user.username}');
         return user;
       }
 
       return null;
     } catch (e) {
-      print('Error logging in with token: $e');
+
       return null;
     }
   }
 
-  /// Login using session token and user info from page scraping
+  /// Store a website session after server-side user validation.
   static Future<void> loginWithSessionToken(String sessionToken, HuggingFaceUser user) async {
     try {
-      print('Saving session token for user: ${user.username}');
 
       // Save the session token (not a real OAuth token, but works for cookie-based auth)
-      await _secureStorage.write(key: _accessTokenKey, value: sessionToken);
+      await _secureStorage.write(key: _sessionTokenKey, value: sessionToken);
       await _cacheUserData(user);
 
       // Set cookie for webviews to maintain session
       await HFCookieManager.setHFAuthCookie(sessionToken);
 
-      print('Session token saved successfully');
     } catch (e) {
-      print('Error saving session token: $e');
+
       rethrow;
     }
   }
@@ -241,7 +163,6 @@ class HFOAuthService {
   /// Login using session cookie by making a request with cookies
   static Future<HuggingFaceUser?> loginWithSessionCookie(String sessionToken) async {
     try {
-      print('Attempting to fetch user info with session cookie...');
 
       // Make a request to the whoami endpoint with the Cookie header
       final response = await http.get(
@@ -252,8 +173,6 @@ class HFOAuthService {
         },
       );
 
-      print('Whoami-v2 with cookie response status: ${response.statusCode}');
-      print('Whoami-v2 with cookie response body: ${response.body}');
 
       if (response.statusCode == 200) {
         final userData = json.decode(response.body);
@@ -274,8 +193,6 @@ class HFOAuthService {
         },
       );
 
-      print('Whoami with cookie response status: ${response2.statusCode}');
-      print('Whoami with cookie response body: ${response2.body}');
 
       if (response2.statusCode == 200) {
         final userData = json.decode(response2.body);
@@ -289,14 +206,13 @@ class HFOAuthService {
 
       return null;
     } catch (e) {
-      print('Error fetching user info with session cookie: $e');
+
       return null;
     }
   }
 
   static Future<HuggingFaceUser?> _fetchUserInfo(String accessToken) async {
     try {
-      print('Access token received: ${accessToken.substring(0, 20)}...');
 
       var response = await http.get(
         Uri.parse('https://huggingface.co/oauth/userinfo'),
@@ -306,8 +222,6 @@ class HFOAuthService {
         },
       );
 
-      print('UserInfo endpoint response status: ${response.statusCode}');
-      print('UserInfo endpoint response body: ${response.body}');
 
       if (response.statusCode == 200) {
         final userData = json.decode(response.body);
@@ -322,8 +236,6 @@ class HFOAuthService {
         },
       );
 
-      print('Whoami endpoint response status: ${response.statusCode}');
-      print('Whoami endpoint response body: ${response.body}');
 
       if (response.statusCode == 200) {
         final userData = json.decode(response.body);
@@ -338,19 +250,16 @@ class HFOAuthService {
         },
       );
 
-      print('Alternative auth response status: ${response.statusCode}');
-      print('Alternative auth response body: ${response.body}');
 
       if (response.statusCode == 200) {
         final userData = json.decode(response.body);
         return HuggingFaceUser.fromJson(userData);
       }
 
-      print('All user info attempts failed');
-      throw Exception('Failed to fetch user information - all endpoints returned errors');
+      throw Exception('Não foi possível consultar os dados do usuário');
     } catch (e) {
-      print('Error fetching user info: $e');
-      throw Exception('Error fetching user information: $e');
+
+      throw Exception('Erro ao consultar dados do usuário: $e');
     }
   }
 
@@ -394,7 +303,7 @@ class HFOAuthService {
         return true;
       }
     } catch (e) {
-      print('Token refresh error: $e');
+
     }
     return false;
   }
@@ -435,6 +344,10 @@ class HFOAuthService {
   }
 
   static Future<bool> validateSession() async {
+    final session = await _secureStorage.read(key: _sessionTokenKey);
+    if (session != null) {
+      return await loginWithSessionCookie(session) != null;
+    }
     final accessToken = await getAccessToken();
     if (accessToken == null) return false;
 

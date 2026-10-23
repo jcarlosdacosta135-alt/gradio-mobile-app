@@ -52,7 +52,7 @@ class _FileViewerScreenState extends State<FileViewerScreen> {
                   children: [
                     Icon(Icons.open_in_new),
                     SizedBox(width: 8),
-                    Text('Open Externally'),
+                    Text('Abrir em outro aplicativo'),
                   ],
                 ),
               ),
@@ -62,7 +62,7 @@ class _FileViewerScreenState extends State<FileViewerScreen> {
                   children: [
                     Icon(Icons.delete, color: Colors.red),
                     SizedBox(width: 8),
-                    Text('Delete', style: TextStyle(color: Colors.red)),
+                    Text('Excluir', style: TextStyle(color: Colors.red)),
                   ],
                 ),
               ),
@@ -123,7 +123,7 @@ class _FileViewerScreenState extends State<FileViewerScreen> {
                                 }
                               },
                               child: Text(
-                                'From ${widget.savedFile.spaceName}',
+                                'Origem: ${widget.savedFile.spaceName}',
                                 style: TextStyle(
                                   fontSize: 12,
                                   color: widget.savedFile.spaceUrl.isNotEmpty ? Colors.blue[700] : Colors.grey[500],
@@ -176,14 +176,14 @@ class _FileViewerScreenState extends State<FileViewerScreen> {
             ),
             SizedBox(height: 16),
             Text(
-              'File not found',
+              'Arquivo não encontrado',
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
               ),
             ),
             Text(
-              'The file may have been moved or deleted',
+              'O arquivo pode ter sido movido ou excluído',
               style: TextStyle(color: Colors.grey),
             ),
           ],
@@ -224,7 +224,7 @@ class _FileViewerScreenState extends State<FileViewerScreen> {
                     color: Colors.grey,
                   ),
                   SizedBox(height: 16),
-                  Text('Unable to display image'),
+                  Text('Não foi possível exibir a imagem'),
                 ],
               ),
             );
@@ -246,7 +246,7 @@ class _FileViewerScreenState extends State<FileViewerScreen> {
           ),
           const SizedBox(height: 16),
           const Text(
-            'Audio File',
+            'Arquivo de áudio',
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
@@ -261,7 +261,7 @@ class _FileViewerScreenState extends State<FileViewerScreen> {
           ElevatedButton.icon(
             onPressed: _openExternally,
             icon: const Icon(Icons.play_arrow),
-            label: const Text('Play in External App'),
+            label: const Text('Reproduzir em outro aplicativo'),
           ),
         ],
       ),
@@ -280,7 +280,7 @@ class _FileViewerScreenState extends State<FileViewerScreen> {
           ),
           const SizedBox(height: 16),
           const Text(
-            'Video File',
+            'Arquivo de vídeo',
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
@@ -295,7 +295,7 @@ class _FileViewerScreenState extends State<FileViewerScreen> {
           ElevatedButton.icon(
             onPressed: _openExternally,
             icon: const Icon(Icons.play_arrow),
-            label: const Text('Play in External App'),
+            label: const Text('Reproduzir em outro aplicativo'),
           ),
         ],
       ),
@@ -319,7 +319,7 @@ class _FileViewerScreenState extends State<FileViewerScreen> {
                 children: [
                   const Icon(Icons.error, size: 64, color: Colors.red),
                   const SizedBox(height: 16),
-                  Text('Error loading file: ${snapshot.error}'),
+                  Text('Erro ao carregar arquivo: ${snapshot.error}'),
                 ],
               ),
             );
@@ -350,7 +350,7 @@ class _FileViewerScreenState extends State<FileViewerScreen> {
           ),
           const SizedBox(height: 16),
           const Text(
-            'Document File',
+            'Documento',
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
@@ -365,7 +365,7 @@ class _FileViewerScreenState extends State<FileViewerScreen> {
           ElevatedButton.icon(
             onPressed: _openExternally,
             icon: const Icon(Icons.open_in_new),
-            label: const Text('Open in External App'),
+            label: const Text('Abrir em outro aplicativo'),
           ),
         ],
       ),
@@ -388,7 +388,7 @@ class _FileViewerScreenState extends State<FileViewerScreen> {
                 children: [
                   const Icon(Icons.error, size: 64, color: Colors.red),
                   const SizedBox(height: 16),
-                  Text('Error loading file: ${snapshot.error}'),
+                  Text('Erro ao carregar arquivo: ${snapshot.error}'),
                 ],
               ),
             );
@@ -437,7 +437,7 @@ class _FileViewerScreenState extends State<FileViewerScreen> {
           ),
           const SizedBox(height: 16),
           const Text(
-            'Data File',
+            'Arquivo de dados',
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
@@ -452,7 +452,7 @@ class _FileViewerScreenState extends State<FileViewerScreen> {
           ElevatedButton.icon(
             onPressed: _openExternally,
             icon: const Icon(Icons.open_in_new),
-            label: const Text('Open in External App'),
+            label: const Text('Abrir em outro aplicativo'),
           ),
         ],
       ),
@@ -486,7 +486,7 @@ class _FileViewerScreenState extends State<FileViewerScreen> {
           ElevatedButton.icon(
             onPressed: _openExternally,
             icon: const Icon(Icons.open_in_new),
-            label: const Text('Open in External App'),
+            label: const Text('Abrir em outro aplicativo'),
           ),
         ],
       ),
@@ -499,19 +499,19 @@ class _FileViewerScreenState extends State<FileViewerScreen> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Edit Description'),
+        title: const Text('Editar descrição'),
         content: TextField(
           controller: controller,
           maxLines: 3,
           decoration: const InputDecoration(
-            hintText: 'Add a description for this file...',
+            hintText: 'Adicione uma descrição para este arquivo...',
             border: OutlineInputBorder(),
           ),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
+            child: const Text('Cancelar'),
           ),
           ElevatedButton(
             onPressed: () async {
@@ -531,7 +531,7 @@ class _FileViewerScreenState extends State<FileViewerScreen> {
                 Navigator.pop(context);
               }
             },
-            child: const Text('Save'),
+            child: const Text('Salvar'),
           ),
         ],
       ),
@@ -544,14 +544,14 @@ class _FileViewerScreenState extends State<FileViewerScreen> {
       if (await file.exists()) {
         await Share.shareXFiles(
           [XFile(file.path)],
-          text: 'Generated from ${widget.savedFile.spaceName}: ${widget.savedFile.originalFileName}',
-          subject: 'Shared from Gradio Mobile App',
+          text: 'Gerado em ${widget.savedFile.spaceName}: ${widget.savedFile.originalFileName}',
+          subject: 'Compartilhado pelo Gradio Spaces',
         );
       } else {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
-              content: Text('File not found'),
+              content: Text('Arquivo não encontrado'),
               backgroundColor: Colors.red,
             ),
           );
@@ -561,7 +561,7 @@ class _FileViewerScreenState extends State<FileViewerScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Error sharing file: $e'),
+            content: Text('Erro ao compartilhar arquivo: $e'),
             backgroundColor: Colors.red,
           ),
         );
@@ -579,16 +579,16 @@ class _FileViewerScreenState extends State<FileViewerScreen> {
           String message;
           switch (result.type) {
             case ResultType.noAppToOpen:
-              message = 'No app available to open this file type';
+              message = 'Nenhum aplicativo disponível para abrir este tipo de arquivo';
               break;
             case ResultType.fileNotFound:
-              message = 'File not found';
+              message = 'Arquivo não encontrado';
               break;
             case ResultType.permissionDenied:
-              message = 'Permission denied to open file';
+              message = 'Permissão negada para abrir o arquivo';
               break;
             default:
-              message = 'Unable to open file: ${result.message}';
+              message = 'Não foi possível abrir o arquivo: ${result.message}';
           }
 
           ScaffoldMessenger.of(context).showSnackBar(
@@ -602,7 +602,7 @@ class _FileViewerScreenState extends State<FileViewerScreen> {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
-              content: Text('File not found'),
+              content: Text('Arquivo não encontrado'),
               backgroundColor: Colors.red,
             ),
           );
@@ -612,7 +612,7 @@ class _FileViewerScreenState extends State<FileViewerScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Error opening file: $e'),
+            content: Text('Erro ao abrir arquivo: $e'),
             backgroundColor: Colors.red,
           ),
         );
@@ -635,14 +635,14 @@ class _FileViewerScreenState extends State<FileViewerScreen> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Delete File'),
+        title: const Text('Excluir arquivo'),
         content: Text(
-          'Are you sure you want to delete "${widget.savedFile.originalFileName}"? This action cannot be undone.',
+          'Deseja excluir "${widget.savedFile.originalFileName}"? Esta ação não pode ser desfeita.',
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
+            child: const Text('Cancelar'),
           ),
           TextButton(
             onPressed: () async {
@@ -662,13 +662,13 @@ class _FileViewerScreenState extends State<FileViewerScreen> {
                 Navigator.pop(context);
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
-                    content: Text('Deleted ${widget.savedFile.originalFileName}'),
+                    content: Text('Arquivo excluído: ${widget.savedFile.originalFileName}'),
                     backgroundColor: Colors.green,
                   ),
                 );
               }
             },
-            child: const Text('Delete', style: TextStyle(color: Colors.red)),
+            child: const Text('Excluir', style: TextStyle(color: Colors.red)),
           ),
         ],
       ),
