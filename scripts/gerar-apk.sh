@@ -15,7 +15,11 @@ bash scripts/preparar-android.sh
 flutter analyze --no-fatal-infos --no-fatal-warnings
 flutter test
 if [[ "$mode" == teste ]]; then
-  flutter build apk --debug
+  build_args=() 
+  if [[ -n "${APK_TARGET_PLATFORM:-}" ]]; then
+    build_args+=(--target-platform "$APK_TARGET_PLATFORM")
+  fi
+  flutter build apk --debug "${build_args[@]}"
   echo 'APK de teste: build/app/outputs/flutter-apk/app-debug.apk'
 else
   flutter build apk --release --split-per-abi
