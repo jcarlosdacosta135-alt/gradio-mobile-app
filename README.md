@@ -1,143 +1,124 @@
-# Gradio Mobile App
-[Available on iOS](https://apps.apple.com/us/app/gradio-spaces/id6753218161)
+# Gradio Spaces — versão em português para Android
 
-Available on Android Soon!
+Aplicativo Flutter para explorar Spaces Gradio do Hugging Face, acessar o HuggingChat e guardar arquivos gerados pelos serviços.
 
-A Flutter mobile application for browsing and managing Gradio spaces from HuggingFace. Features OAuth authentication, automatic username detection, and categorized space browsing.
+**Este pacote é código-fonte revisado. Não contém APK compilado.** A inferência é executada online pelos serviços acessados. Os arquivos já salvos podem ser consultados localmente.
 
-## Features
+## Gerar o APK pelo computador
 
-- 🔐 **OAuth Authentication** - Secure login with HuggingFace
-- 👤 **Automatic Username Detection** - No manual username entry required
-- 📱 **Space Categories** - Browse by Image Generation, Text Generation, etc.
-- ❤️ **Liked Spaces** - View your public liked Gradio spaces
-- 👨‍💻 **Created Spaces** - See your own Gradio spaces
-- 🔄 **Pull-to-Refresh** - Keep your spaces up to date
-- 💬 **HuggingChat** - Use HuggingChat and chat with open source models
+Requisitos:
 
-## Prerequisites
-Follow [these](https://docs.flutter.dev/get-started/install/macos/mobile-ios) instructions for setting up Flutter on iOS.
-Follow [these](https://docs.flutter.dev/get-started/install/macos/mobile-android) instructions for setting up Flutter on Android.
+- Flutter com Dart >=3.9.0 e <4.0.0. O workflow incluído usa Flutter 3.35.7.
+- JDK 17.
+- Android SDK, ferramentas de compilação e licenças aceitas.
+- Internet para obter dependências e ferramentas na primeira compilação.
+- Linux, macOS ou Windows com Git Bash para os scripts `.sh`.
 
-Before running this app, ensure you have:
+Abra um terminal na pasta que contém este README e execute:
 
-### 1. Flutter Development Environment
-- **Flutter SDK** (3.9.0 or higher)
-- **Dart SDK** (included with Flutter)
-- **Xcode** (for iOS development on macOS)
-- **Android Studio** (for Android development)
-
-### 2. Platform-Specific Setup
-
-#### iOS (macOS only)
 ```bash
-# Install Xcode from Mac App Store
-# Install Xcode command line tools
-sudo xcode-select --install
-
-# Install CocoaPods
-sudo gem install cocoapods
-```
-
-#### Android
-```bash
-# Install Android Studio
-# Configure Android SDK and create virtual device
-# Accept Android licenses
 flutter doctor --android-licenses
+bash scripts/gerar-apk.sh teste
 ```
 
-## Quick Test (Prebuilt iOS App)
+O script restaura os arquivos ausentes do Gradle Wrapper a partir de um projeto Flutter temporário, instala as dependências, executa a análise e os testes, e tenta gerar o APK de depuração. Ele preserva os arquivos Android personalizados.
 
-If you want to test the app immediately without setting up Flutter, you can use the prebuilt iOS app.
+Resultado esperado após compilação bem-sucedida:
 
-### iOS Simulator (macOS only)
-1. Download [Runner-iOS-Simulator.zip](./Runner-iOS-Simulator.zip)
-2. Unzip the file to extract `Runner.app`
-3. Open iOS Simulator:
-   ```bash
-   open -a Simulator
-   ```
-4. Wait for the simulator to load, then drag `Runner.app` onto the simulator screen
-5. The app will install automatically and appear on the home screen
-6. Tap the app icon to launch it
-
-**Requirements**: macOS with Xcode and iOS Simulator installed.
-
-**Note**: The prebuilt app is configured for iOS Simulator only and won't work on physical devices.
-
----
-
-## Running the App (Development)
-### Setup Instructions
-
-### 1. Clone and Install Dependencies
-
-```bash
-# Clone the repository
-git clone <repository-url>
-cd gradio-mobile-app
-
-# Install Flutter dependencies
-flutter pub get
-
-# For iOS: Install CocoaPods dependencies
-cd ios
-pod install
-cd ..
+```text
+build/app/outputs/flutter-apk/app-debug.apk
 ```
 
-### 2. Verify Setup
+Transfira esse arquivo para o Android e abra-o para instalar. O aparelho pode solicitar autorização para instalar aplicativos dessa origem. A versão revisada usa Android 7.0/API 24 ou superior.
+
+Para executar diretamente num dispositivo conectado:
 
 ```bash
-# Check Flutter installation and connected devices
-flutter doctor
-```
-
-### Option 1: Using Flutter CLI
-
-```bash
-# List available devices
+bash scripts/preparar-android.sh
 flutter devices
-
-# Run on iOS Simulator
-flutter run -d "iPhone 16 Pro"
-
-# Run on Android Emulator
-flutter run -d "Pixel_8_API_34"
-
-# Run in debug mode (default)
-flutter run --debug
-
-# Run in release mode (optimized)
-flutter run --release
+flutter run
 ```
 
-### Option 2: Using VS Code
+## Gerar pelo GitHub usando o celular
 
-1. Open the project in VS Code
-2. Install the Flutter extension
-3. Press `F5` or use the "Run and Debug" panel
-4. Select your target device
+O pacote inclui `.github/workflows/android-apk.yml`. O workflow foi preparado, mas não foi enviado nem executado em uma conta GitHub.
 
-### Option 3: Using Android Studio/IntelliJ
+1. Crie um repositório e envie o conteúdo desta pasta para a raiz dele. A pasta `.github` também precisa estar incluída.
+2. Abra **Actions → Gerar APK Android → Run workflow**.
+3. Aguarde a compilação. Se falhar, abra a etapa que apresentou erro para ler o diagnóstico.
+4. Se passar, baixe o artefato **gradio-spaces-android-teste**.
+5. Extraia o artefato e instale `app-debug.apk`.
 
-1. Open the project in Android Studio
-2. Select your target device from the device dropdown
-3. Click the "Run" button (green play icon)
+O GitHub pode aplicar limites ou cobrança conforme a conta e o uso. O fluxo gera somente APK de teste. Nenhum token pessoal do Hugging Face ou chave de publicação precisa ser colocado no repositório.
 
-### Option 4: Using Xcode (iOS only)
+## Gerar versão assinada para distribuição
 
-1. Open `ios/Runner.xcworkspace` in Xcode
-2. Select your target device/simulator
-3. Press `Cmd + R` to run
+Primeiro crie sua própria chave de assinatura, fora do controle de versão:
 
-## Screenshots
+```bash
+keytool -genkeypair -v -keystore android/upload-keystore.jks -keyalg RSA -keysize 2048 -validity 10000 -alias upload
+```
 
-<div align="center">
+Copie `android/key.properties.example` para `android/key.properties` e preencha os campos. O caminho `storeFile` é relativo à pasta `android` ou absoluto. Guarde a chave e as senhas, pois são necessárias para futuras atualizações.
 
-<img src="screenshots/browse_screen.png" width="250" alt="Browse Screen">
-<img src="screenshots/likes_screen.png" width="250" alt="Liked Spaces">
-<img src="screenshots/outputs_screen.png" width="250" alt="Generated Outputs">
+```bash
+bash scripts/gerar-apk.sh publicacao
+```
 
-</div>
+O script exige a configuração de assinatura e gera APKs separados por arquitetura na pasta `build/app/outputs/flutter-apk/`. Para o seu realme RMX3830, procure o APK `app-arm64-v8a-release.apk`.
+
+Para gerar um Android App Bundle, após configurar a assinatura:
+
+```bash
+flutter build appbundle --release
+```
+
+O Gradle mantém uma assinatura de depuração como alternativa para execuções locais sem chave; **essa alternativa não é uma assinatura de publicação**. O script `publicacao` impede esse uso acidental.
+
+## Login no Hugging Face
+
+O aplicativo usa a página oficial de login em WebView para os favoritos e para compartilhar a sessão com o chat. Também preserva o serviço OAuth do projeto.
+
+O identificador OAuth presente no código pertence à configuração original. Para distribuir uma edição própria, cadastre seu cliente no Hugging Face e confira os valores em:
+
+- `lib/services/hf_oauth_service.dart`: identificador do cliente e URI de retorno.
+- `android/app/build.gradle.kts`: esquema de retorno do AppAuth.
+- `android/app/src/main/AndroidManifest.xml`: esquema e host do retorno.
+- Configuração iOS, caso também decida gerar uma edição para iPhone.
+
+O esquema de retorno foi preservado para evitar quebrar o cadastro original. O funcionamento real do login depende do cadastro, das regras e das páginas atuais do Hugging Face e precisa ser testado no aparelho. Tokens OAuth e cookies de sessão agora são armazenados separadamente; um token OAuth não é inserido como cookie de sessão do site.
+
+## O que foi alterado
+
+- Interface própria, 36 categorias, mensagens e datas relativas em português do Brasil.
+- Localização padrão dos controles Material em português.
+- Fontes do sistema para evitar download de fontes externas.
+- Rota `/outputs` registrada.
+- Câmera e microfone declarados no Android, solicitados apenas quando um Space precisa deles e mediante consentimento.
+- Origens de mídia limitadas ao Space HTTPS selecionado e a `huggingface.co`.
+- Cancelamento de exceções de certificado TLS.
+- Remoção de registros de cookies, tokens e dados de autenticação.
+- Remoção da identificação de usuário por raspagem de links da página; a sessão é conferida com o servidor.
+- Busca com caracteres especiais codificados corretamente na URL.
+- Java 17, Kotlin 2.2.0, Android Gradle Plugin 8.12.1 e Gradle 8.13 para atender aos requisitos de `share_plus 12.0.0`.
+- Memória máxima do heap do Gradle reduzida de 8 GB para 2 GB e dois workers.
+- Testes da política de origens substituindo o teste de contador que não correspondia ao aplicativo.
+- Scripts de preparação e compilação e workflow manual de APK de teste.
+
+As páginas externas, os nomes e as descrições de Spaces fornecidos pelo Hugging Face conservam o idioma original. Esta revisão tem foco no Android; o código de iOS permanece incluído, mas não foi validado.
+
+## Validação e limitações
+
+O ambiente desta revisão não dispõe de Flutter/Dart nem de um Android SDK configurado. Por isso não foi possível executar `flutter analyze`, `flutter test`, compilar APK ou testar em aparelho. Verificações locais de estrutura e scripts estão registradas em `VALIDACAO.md`. Ter código preparado não equivale a uma compilação homologada.
+
+O arquivo `pubspec.lock` original foi preservado como referência; `flutter pub get` precisa atualizá-lo para incluir a localização Material e remover as dependências de fontes. Revise e mantenha o novo lock após a primeira resolução bem-sucedida.
+
+Os binários do simulador iOS (`Runner.app`, `Runner-iOS-Simulator.zip`) e relatórios de build antigos foram retirados do pacote revisado. Eles não são necessários para compilar o Android. Não foi removido código-fonte das plataformas.
+
+Compilar Flutter diretamente no Termux não é o fluxo documentado aqui. Pelo Android, use o workflow incluído; pelo computador, use o SDK Flutter e o Android SDK.
+
+## Referências técnicas
+
+- https://docs.flutter.dev/deployment/android
+- https://inappwebview.dev/docs/web-rtc/
+- https://pub.dev/packages/share_plus/versions/12.0.0

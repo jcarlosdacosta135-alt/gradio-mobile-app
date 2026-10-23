@@ -19,10 +19,10 @@ class SpaceCard extends StatelessWidget {
     if (lastModified == null) return '';
     final now = DateTime.now();
     final difference = now.difference(lastModified);
-    if (difference.inDays > 0) return '${difference.inDays}d ago';
-    if (difference.inHours > 0) return '${difference.inHours}h ago';
-    if (difference.inMinutes > 0) return '${difference.inMinutes}m ago';
-    return 'just now';
+    if (difference.inDays > 0) return 'há ${difference.inDays} d';
+    if (difference.inHours > 0) return 'há ${difference.inHours} h';
+    if (difference.inMinutes > 0) return 'há ${difference.inMinutes} min';
+    return 'agora mesmo';
   }
 
   static final Map<String, String?> _avatarUrlCache = {};

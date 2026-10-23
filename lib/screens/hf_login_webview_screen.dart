@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
-import 'package:google_fonts/google_fonts.dart';
 import '../services/hf_oauth_service.dart';
 
 class HFLoginWebviewScreen extends StatefulWidget {
@@ -30,8 +29,8 @@ class _HFLoginWebviewScreenState extends State<HFLoginWebviewScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'Sign in with Hugging Face',
-          style: GoogleFonts.sourceSans3(
+          'Entrar com Hugging Face',
+          style: TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.w600,
             color: Colors.black87,
@@ -46,8 +45,8 @@ class _HFLoginWebviewScreenState extends State<HFLoginWebviewScreen> {
                 TextButton(
                   onPressed: _finishLogin,
                   child: Text(
-                    'Done',
-                    style: GoogleFonts.sourceSans3(
+                    'Concluir',
+                    style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
                       color: Colors.blue,
@@ -115,7 +114,7 @@ class _HFLoginWebviewScreenState extends State<HFLoginWebviewScreen> {
       } else if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('Unable to complete sign-in. Please try again.'),
+            content: Text('Não foi possível concluir o login. Tente novamente.'),
             backgroundColor: Colors.red,
           ),
         );
@@ -148,13 +147,6 @@ class _HFLoginWebviewScreenState extends State<HFLoginWebviewScreen> {
         final cookies = await cookieManager.getCookies(
           url: WebUri('https://huggingface.co'),
         );
-
-        // Debug: Print all cookies
-        print('=== HuggingFace Cookies ===');
-        for (final cookie in cookies) {
-          print('Cookie: ${cookie.name} = ${cookie.value.substring(0, cookie.value.length > 20 ? 20 : cookie.value.length)}...');
-        }
-
         // Look for authentication cookies
         // HuggingFace uses 'token' for API and 'hf-chat' for chat
         String? token;
@@ -167,8 +159,6 @@ class _HFLoginWebviewScreenState extends State<HFLoginWebviewScreen> {
             hasHfChat = true;
           }
         }
-
-        print('Token found: ${token != null}, hf-chat found: $hasHfChat');
 
         if (token != null && token.isNotEmpty) {
           // User is logged in! The token is a session cookie, not an OAuth token
@@ -183,7 +173,7 @@ class _HFLoginWebviewScreenState extends State<HFLoginWebviewScreen> {
 
             // Navigate to /chat briefly to initialize chat cookies
             if (!hasHfChat && !url.contains('/chat')) {
-              print('Navigating to /chat to initialize chat session...');
+
               await controller?.loadUrl(
                 urlRequest: URLRequest(url: WebUri('https://huggingface.co/chat/')),
               );
@@ -198,7 +188,7 @@ class _HFLoginWebviewScreenState extends State<HFLoginWebviewScreen> {
             if (mounted) {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content: Text('Welcome, ${user.username}!'),
+                  content: Text('Bem-vindo, ${user.username}!'),
                   backgroundColor: Colors.green,
                   duration: const Duration(seconds: 2),
                 ),
@@ -222,7 +212,7 @@ class _HFLoginWebviewScreenState extends State<HFLoginWebviewScreen> {
             if (mounted) {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content: Text('Welcome, ${user.username}!'),
+                  content: Text('Bem-vindo, ${user.username}!'),
                   backgroundColor: Colors.green,
                   duration: const Duration(seconds: 2),
                 ),
@@ -233,7 +223,7 @@ class _HFLoginWebviewScreenState extends State<HFLoginWebviewScreen> {
           }
         }
       } catch (e) {
-        print('Error checking login status: $e');
+
       } finally {
         _isCheckingLogin = false;
       }
@@ -258,75 +248,17 @@ class _HFLoginWebviewScreenState extends State<HFLoginWebviewScreen> {
       }
 
       if (sessionToken == null || sessionToken.isEmpty) {
-        print('No session token found in cookies');
+
         return null;
-      }
-
-      print('Session token found, attempting to fetch user info from page...');
-
-      // Use JavaScript to get user info from the page
-      if (controller != null) {
-        try {
-          // Try to get username from the page's data
-          final result = await controller!.evaluateJavascript(source: '''
-            (function() {
-              // Try to get username from various places on the page
-              var username = null;
-
-              // Method 1: Check for user menu/profile link
-              var profileLink = document.querySelector('a[href^="/"]');
-              if (profileLink) {
-                var href = profileLink.getAttribute('href');
-                if (href && href.startsWith('/') && !href.startsWith('//') && href.length > 1 && !href.startsWith('/settings') && !href.startsWith('/chat')) {
-                  username = href.substring(1).split('/')[0];
-                }
-              }
-
-              // Method 2: Check for username in page scripts or data
-              var scripts = document.getElementsByTagName('script');
-              for (var i = 0; i < scripts.length; i++) {
-                var content = scripts[i].textContent;
-                if (content && content.includes('"username"')) {
-                  var match = content.match(/"username"\\s*:\\s*"([^"]+)"/);
-                  if (match && match[1]) {
-                    username = match[1];
-                    break;
-                  }
-                }
-              }
-
-              return username;
-            })();
-          ''');
-
-          print('JavaScript extraction result: $result');
-
-          if (result != null && result.toString().isNotEmpty && result.toString() != 'null') {
-            final username = result.toString();
-            print('Extracted username from page: $username');
-
-            // Create a HuggingFaceUser with the session token
-            // We'll save the session token for making authenticated API requests
-            final user = HuggingFaceUser(username: username);
-
-            // Save the session token as if it were an access token
-            // This will allow the app to use it for authenticated requests with cookies
-            await HFOAuthService.loginWithSessionToken(sessionToken, user);
-
-            return user;
-          }
-        } catch (e) {
-          print('JavaScript extraction failed: $e');
-        }
       }
 
       // Fallback: Try to fetch user info using the session token as a cookie
       // Make a request to whoami endpoint with cookies
-      print('Attempting to fetch user info using session cookies...');
+
       final user = await HFOAuthService.loginWithSessionCookie(sessionToken);
       return user;
     } catch (e) {
-      print('Error fetching user from cookies: $e');
+
       return null;
     }
   }

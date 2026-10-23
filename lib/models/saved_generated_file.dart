@@ -105,13 +105,13 @@ class SavedGeneratedFile {
     final difference = now.difference(timestamp);
 
     if (difference.inDays > 0) {
-      return '${difference.inDays} day${difference.inDays == 1 ? '' : 's'} ago';
+      return 'há ${difference.inDays} dia${difference.inDays == 1 ? '' : 's'}';
     } else if (difference.inHours > 0) {
-      return '${difference.inHours} hour${difference.inHours == 1 ? '' : 's'} ago';
+      return 'há ${difference.inHours} hora${difference.inHours == 1 ? '' : 's'}';
     } else if (difference.inMinutes > 0) {
-      return '${difference.inMinutes} minute${difference.inMinutes == 1 ? '' : 's'} ago';
+      return 'há ${difference.inMinutes} minuto${difference.inMinutes == 1 ? '' : 's'}';
     } else {
-      return 'Just now';
+      return 'Agora mesmo';
     }
   }
 
@@ -183,11 +183,11 @@ class SavedGeneratedFile {
   }
 
   String get fileTypeCategory {
-    if (isImage) return 'Image';
-    if (isAudio) return 'Audio';
-    if (isVideo) return 'Video';
-    if (isDocument) return 'Document';
-    if (isData) return 'Data';
-    return 'File';
+    if (isImage) return 'Imagem';
+    if (isAudio) return 'Áudio';
+    if (isVideo) return 'Vídeo';
+    if (isDocument) return 'Documento';
+    if (isData) return 'Dados';
+    return 'Arquivo';
   }
 }

@@ -16,9 +16,8 @@ class HFCookieManager {
         sameSite: HTTPCookieSameSitePolicy.LAX,
       );
 
-      print('✅ HF auth cookie set successfully');
     } catch (e) {
-      print('❌ Error setting HF auth cookie: $e');
+
     }
   }
 
@@ -34,9 +33,8 @@ class HFCookieManager {
         domain: '.huggingface.co',
       );
 
-      print('✅ HF cookies cleared successfully');
     } catch (e) {
-      print('❌ Error clearing HF cookies: $e');
+
     }
   }
 
@@ -54,7 +52,7 @@ class HFCookieManager {
 
       return null;
     } catch (e) {
-      print('❌ Error getting HF auth cookie: $e');
+
       return null;
     }
   }

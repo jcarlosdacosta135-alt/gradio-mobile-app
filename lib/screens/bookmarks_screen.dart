@@ -6,7 +6,6 @@ import '../services/hf_cookie_manager.dart';
 import 'gradio_webview_screen.dart';
 import 'hf_login_webview_screen.dart';
 import '../widgets/space_card.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 class BookmarksScreen extends StatefulWidget {
   const BookmarksScreen({super.key});
@@ -136,7 +135,7 @@ class _BookmarksScreenState extends State<BookmarksScreen> with TickerProviderSt
         _hasShownWelcomeBanner = true;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Found ${futures[0].length} liked and ${futures[1].length} created spaces!'),
+            content: Text('Encontrados ${futures[0].length} Spaces curtidos e ${futures[1].length} criados!'),
             backgroundColor: Colors.green,
           ),
         );
@@ -152,7 +151,7 @@ class _BookmarksScreenState extends State<BookmarksScreen> with TickerProviderSt
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Error loading spaces: $e'),
+            content: Text('Erro ao carregar Spaces: $e'),
             backgroundColor: Colors.red,
           ),
         );
@@ -201,8 +200,8 @@ class _BookmarksScreenState extends State<BookmarksScreen> with TickerProviderSt
           borderRadius: BorderRadius.circular(16),
         ),
         title: Text(
-          'Sort by',
-          style: GoogleFonts.sourceSans3(
+          'Ordenar por',
+          style: TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.w600,
             color: Colors.black87,
@@ -211,13 +210,13 @@ class _BookmarksScreenState extends State<BookmarksScreen> with TickerProviderSt
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            _buildSortOption(context, 'liked', 'Most recent likes', Icons.favorite),
+            _buildSortOption(context, 'liked', 'Curtidas mais recentes', Icons.favorite),
             const SizedBox(height: 8),
-            _buildSortOption(context, 'likes', 'Most liked', Icons.favorite_border),
+            _buildSortOption(context, 'likes', 'Mais curtidos', Icons.favorite_border),
             const SizedBox(height: 8),
-            _buildSortOption(context, 'recent', 'Recently updated', Icons.schedule),
+            _buildSortOption(context, 'recent', 'Atualizados recentemente', Icons.schedule),
             const SizedBox(height: 8),
-            _buildSortOption(context, 'name', 'Name A–Z', Icons.sort_by_alpha),
+            _buildSortOption(context, 'name', 'Nome A–Z', Icons.sort_by_alpha),
           ],
         ),
       ),
@@ -258,7 +257,7 @@ class _BookmarksScreenState extends State<BookmarksScreen> with TickerProviderSt
             Expanded(
               child: Text(
                 label,
-                style: GoogleFonts.sourceSans3(
+                style: TextStyle(
                   fontSize: 16,
                   fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
                   color: isSelected ? Colors.blue : Colors.black87,
@@ -285,8 +284,8 @@ class _BookmarksScreenState extends State<BookmarksScreen> with TickerProviderSt
           borderRadius: BorderRadius.circular(16),
         ),
         title: Text(
-          'Filter by',
-          style: GoogleFonts.sourceSans3(
+          'Filtrar por',
+          style: TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.w600,
             color: Colors.black87,
@@ -295,11 +294,11 @@ class _BookmarksScreenState extends State<BookmarksScreen> with TickerProviderSt
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            _buildFilterOption(context, 'all', 'All Spaces', Icons.apps),
+            _buildFilterOption(context, 'all', 'Todos os Spaces', Icons.apps),
             const SizedBox(height: 8),
-            _buildFilterOption(context, 'liked', 'Liked Only', Icons.favorite),
+            _buildFilterOption(context, 'liked', 'Apenas curtidos', Icons.favorite),
             const SizedBox(height: 8),
-            _buildFilterOption(context, 'created', 'Created Only', Icons.person),
+            _buildFilterOption(context, 'created', 'Apenas criados', Icons.person),
           ],
         ),
       ),
@@ -338,7 +337,7 @@ class _BookmarksScreenState extends State<BookmarksScreen> with TickerProviderSt
             Expanded(
               child: Text(
                 label,
-                style: GoogleFonts.sourceSans3(
+                style: TextStyle(
                   fontSize: 16,
                   fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
                   color: isSelected ? Colors.blue : Colors.black87,
@@ -410,7 +409,7 @@ class _BookmarksScreenState extends State<BookmarksScreen> with TickerProviderSt
 
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Signed out successfully')),
+        const SnackBar(content: Text('Você saiu da conta')),
       );
     }
   }
@@ -422,13 +421,13 @@ class _BookmarksScreenState extends State<BookmarksScreen> with TickerProviderSt
     final difference = now.difference(lastModified);
 
     if (difference.inDays > 0) {
-      return '${difference.inDays}d ago';
+      return 'há ${difference.inDays} d';
     } else if (difference.inHours > 0) {
-      return '${difference.inHours}h ago';
+      return 'há ${difference.inHours} h';
     } else if (difference.inMinutes > 0) {
-      return '${difference.inMinutes}m ago';
+      return 'há ${difference.inMinutes} min';
     } else {
-      return 'just now';
+      return 'agora mesmo';
     }
   }
 
@@ -460,12 +459,12 @@ class _BookmarksScreenState extends State<BookmarksScreen> with TickerProviderSt
             ),
             const SizedBox(height: 20),
             const Text(
-              'Sign in to view your spaces',
+              'Entre para visualizar seus Spaces',
               style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 10),
             const Text(
-              'Connect to your Hugging Face account to view spaces you\'ve liked',
+              'Conecte sua conta do Hugging Face para visualizar seus Spaces curtidos',
               style: TextStyle(fontSize: 16, color: Colors.grey),
               textAlign: TextAlign.center,
             ),
@@ -486,8 +485,8 @@ class _BookmarksScreenState extends State<BookmarksScreen> with TickerProviderSt
                 onPressed: isLoading ? null : _signInWithOAuth,
                 icon: const Text('🤗', style: TextStyle(fontSize: 18)),
                 label: Text(
-                  'Sign in with Hugging Face',
-                  style: GoogleFonts.sourceSans3(
+                  'Entrar com Hugging Face',
+                  style: TextStyle(
                     fontSize: 15,
                     fontWeight: FontWeight.w700,
                     color: Colors.black,
@@ -522,12 +521,12 @@ class _BookmarksScreenState extends State<BookmarksScreen> with TickerProviderSt
             ),
             const SizedBox(height: 20),
             const Text(
-              'No public liked spaces found',
+              'Nenhum Space curtido publicamente',
               style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 10),
             Text(
-              'Only public likes are shown here.\n\nIf you have liked spaces set to private, they won\'t appear in this list.',
+              'Somente curtidas públicas são exibidas aqui.\n\nCurtidas privadas não aparecem nesta lista.',
               style: const TextStyle(fontSize: 16, color: Colors.grey),
               textAlign: TextAlign.center,
             ),
@@ -536,7 +535,7 @@ class _BookmarksScreenState extends State<BookmarksScreen> with TickerProviderSt
               onPressed: () {
               },
               icon: const Icon(Icons.open_in_browser),
-              label: const Text('View on HuggingFace'),
+              label: const Text('Ver no Hugging Face'),
             ),
           ],
         ),
@@ -575,12 +574,12 @@ class _BookmarksScreenState extends State<BookmarksScreen> with TickerProviderSt
             ),
             const SizedBox(height: 20),
             const Text(
-              'Sign in to view your spaces',
+              'Entre para visualizar seus Spaces',
               style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 10),
             const Text(
-              'Connect to your Hugging Face account to view your created Gradio spaces',
+              'Conecte sua conta do Hugging Face para visualizar os Spaces Gradio que você criou',
               style: TextStyle(fontSize: 16, color: Colors.grey),
               textAlign: TextAlign.center,
             ),
@@ -601,8 +600,8 @@ class _BookmarksScreenState extends State<BookmarksScreen> with TickerProviderSt
                 onPressed: isLoading ? null : _signInWithOAuth,
                 icon: const Text('🤗', style: TextStyle(fontSize: 18)),
                 label: Text(
-                  'Sign in with Hugging Face',
-                  style: GoogleFonts.sourceSans3(
+                  'Entrar com Hugging Face',
+                  style: TextStyle(
                     fontSize: 15,
                     fontWeight: FontWeight.w700,
                     color: Colors.black,
@@ -637,12 +636,12 @@ class _BookmarksScreenState extends State<BookmarksScreen> with TickerProviderSt
             ),
             SizedBox(height: 20),
             Text(
-              'No Gradio spaces found',
+              'Nenhum Space Gradio encontrado',
               style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
             SizedBox(height: 10),
             Text(
-              'Create some Gradio spaces on Hugging Face to see them here',
+              'Crie Spaces Gradio no Hugging Face para visualizá-los aqui',
               style: TextStyle(fontSize: 16, color: Colors.grey),
               textAlign: TextAlign.center,
             ),
@@ -668,8 +667,8 @@ class _BookmarksScreenState extends State<BookmarksScreen> with TickerProviderSt
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'Favorites',
-          style: GoogleFonts.sourceSans3(
+          'Favoritos',
+          style: TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.w700,
             color: Colors.black87,
@@ -695,7 +694,7 @@ class _BookmarksScreenState extends State<BookmarksScreen> with TickerProviderSt
                     children: [
                       const Icon(Icons.error, size: 64, color: Colors.red),
                       const SizedBox(height: 16),
-                      Text('Error: $error'),
+                      Text('Erro: $error'),
                       const SizedBox(height: 16),
                       ElevatedButton(
                         onPressed: () {
@@ -703,7 +702,7 @@ class _BookmarksScreenState extends State<BookmarksScreen> with TickerProviderSt
                             _fetchUserSpaces(currentUser!.username);
                           }
                         },
-                        child: const Text('Retry'),
+                        child: const Text('Tentar novamente'),
                       ),
                     ],
                   ),

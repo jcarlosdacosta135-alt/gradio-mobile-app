@@ -7,7 +7,6 @@ import '../widgets/space_type_card.dart';
 import '../widgets/space_card.dart';
 import 'gradio_webview_screen.dart';
 import 'spaces_by_type_screen.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 class BrowseScreen extends StatefulWidget {
   const BrowseScreen({super.key});
@@ -145,8 +144,8 @@ class _BrowseScreenState extends State<BrowseScreen> {
           }
         },
         decoration: InputDecoration(
-          hintText: 'Search for spaces...',
-          hintStyle: GoogleFonts.sourceSans3(
+          hintText: 'Pesquisar Spaces...',
+          hintStyle: TextStyle(
             fontSize: 15,
             color: Colors.grey[500],
             fontWeight: FontWeight.w400,
@@ -171,7 +170,7 @@ class _BrowseScreenState extends State<BrowseScreen> {
           border: InputBorder.none,
           contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
         ),
-        style: GoogleFonts.sourceSans3(
+        style: TextStyle(
           fontSize: 15,
           fontWeight: FontWeight.w400,
         ),
@@ -184,13 +183,13 @@ class _BrowseScreenState extends State<BrowseScreen> {
     final difference = now.difference(lastModified);
     
     if (difference.inDays > 0) {
-      return '${difference.inDays}d ago';
+      return 'há ${difference.inDays} d';
     } else if (difference.inHours > 0) {
-      return '${difference.inHours}h ago';
+      return 'há ${difference.inHours} h';
     } else if (difference.inMinutes > 0) {
-      return '${difference.inMinutes}m ago';
+      return 'há ${difference.inMinutes} min';
     } else {
-      return 'just now';
+      return 'agora mesmo';
     }
   }
 
@@ -200,7 +199,7 @@ class _BrowseScreenState extends State<BrowseScreen> {
       appBar: AppBar(
         title: Text(
           'Spaces',
-          style: GoogleFonts.sourceSans3(
+          style: TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.w700,
             color: Colors.black87,
@@ -217,9 +216,9 @@ class _BrowseScreenState extends State<BrowseScreen> {
                 });
               },
               itemBuilder: (context) => const [
-                PopupMenuItem(value: 'likes', child: Text('Most liked')),
-                PopupMenuItem(value: 'recent', child: Text('Recently updated')),
-                PopupMenuItem(value: 'name', child: Text('Name A–Z')),
+                PopupMenuItem(value: 'likes', child: Text('Mais curtidos')),
+                PopupMenuItem(value: 'recent', child: Text('Atualizados recentemente')),
+                PopupMenuItem(value: 'name', child: Text('Nome A–Z')),
               ],
             ),
         ],
@@ -277,7 +276,7 @@ class _BrowseScreenState extends State<BrowseScreen> {
                         children: [
                           const Icon(Icons.error, size: 64, color: Colors.red),
                           const SizedBox(height: 16),
-                          Text('Error: $error'),
+                          Text('Erro: $error'),
                           const SizedBox(height: 16),
                           ElevatedButton(
                             onPressed: () {
@@ -288,7 +287,7 @@ class _BrowseScreenState extends State<BrowseScreen> {
                                 error = null;
                               });
                             },
-                            child: const Text('Back to Categories'),
+                            child: const Text('Voltar às categorias'),
                           ),
                         ],
                       ),

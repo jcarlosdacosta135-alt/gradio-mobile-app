@@ -30,7 +30,7 @@ class FileStorageService {
       print('✅ File storage service initialized at: ${savedFilesDir.path}');
     } catch (e) {
       print('❌ Error initializing file storage service: $e');
-      throw Exception('Failed to initialize file storage: $e');
+      throw Exception('Falha ao inicializar o armazenamento: $e');
     }
   }
 
@@ -93,7 +93,7 @@ class FileStorageService {
         if (fileData.startsWith('data:')) {
           final dataUrlParts = fileData.split(',');
           if (dataUrlParts.length != 2) {
-            throw Exception('Invalid data URL format');
+            throw Exception('Formato de URL de dados inválido');
           }
           final urlDecodedBase64 = Uri.decodeComponent(dataUrlParts[1]);
           fileBytes = base64Decode(urlDecodedBase64);
@@ -106,7 +106,7 @@ class FileStorageService {
         print('📊 Processing data URL...');
         final dataUrlParts = fileUrl.split(',');
         if (dataUrlParts.length != 2) {
-          throw Exception('Invalid data URL format');
+          throw Exception('Formato de URL de dados inválido');
         }
 
         final urlDecodedBase64 = Uri.decodeComponent(dataUrlParts[1]);
@@ -122,7 +122,7 @@ class FileStorageService {
         );
 
         if (response.statusCode != 200) {
-          throw Exception('Failed to download file: HTTP ${response.statusCode}');
+          throw Exception('Falha ao baixar arquivo: HTTP ${response.statusCode}');
         }
 
         fileBytes = Uint8List.fromList(response.data);
@@ -376,6 +376,6 @@ class FileStorageService {
 
   static Future<String> getStorageInfo() async {
     final totalBytes = await getTotalStorageUsed();
-    return 'Total storage used: ${_formatFileSize(totalBytes)}';
+    return 'Armazenamento utilizado: ${_formatFileSize(totalBytes)}';
   }
 }

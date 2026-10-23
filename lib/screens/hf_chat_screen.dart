@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 class HFChatScreen extends StatefulWidget {
   const HFChatScreen({super.key});
@@ -40,7 +39,7 @@ class _HFChatScreenState extends State<HFChatScreen> with AutomaticKeepAliveClie
       appBar: AppBar(
         title: Text(
           'HuggingChat',
-          style: GoogleFonts.sourceSans3(
+          style: TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.w700,
             color: Colors.black87,
@@ -53,7 +52,7 @@ class _HFChatScreenState extends State<HFChatScreen> with AutomaticKeepAliveClie
               onPressed: () {
                 controller?.reload();
               },
-              tooltip: 'Refresh',
+              tooltip: 'Atualizar',
             ),
             IconButton(
               icon: const Icon(Icons.arrow_back_ios),
@@ -62,7 +61,7 @@ class _HFChatScreenState extends State<HFChatScreen> with AutomaticKeepAliveClie
                   controller?.goBack();
                 }
               },
-              tooltip: 'Back',
+              tooltip: 'Voltar',
             ),
             IconButton(
               icon: const Icon(Icons.arrow_forward_ios),
@@ -71,7 +70,7 @@ class _HFChatScreenState extends State<HFChatScreen> with AutomaticKeepAliveClie
                   controller?.goForward();
                 }
               },
-              tooltip: 'Forward',
+              tooltip: 'Avançar',
             ),
           ],
         ],

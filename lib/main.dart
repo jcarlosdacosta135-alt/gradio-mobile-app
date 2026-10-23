@@ -1,18 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:permission_handler/permission_handler.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'screens/browse_screen.dart';
 import 'screens/bookmarks_screen.dart';
 import 'screens/outputs_screen.dart';
 import 'screens/hf_chat_screen.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Request camera and microphone permissions for WebView access
-  // This allows WKWebView to use getUserMedia API for WebRTC
-  await Permission.camera.request();
-  await Permission.microphone.request();
 
   runApp(const MyApp());
 }
@@ -24,11 +19,15 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Gradio Mobile',
+      locale: const Locale('pt', 'BR'),
+      supportedLocales: const [Locale('pt', 'BR')],
+      localizationsDelegates: GlobalMaterialLocalizations.delegates,
+      routes: {'/outputs': (_) => const OutputsScreen()},
+      title: 'Gradio Spaces',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.blueGrey),
         useMaterial3: true,
-        textTheme: GoogleFonts.sourceSans3TextTheme(),
+        textTheme: Typography.material2021().black,
         navigationBarTheme: NavigationBarThemeData(
           backgroundColor: Colors.transparent,
           indicatorColor: Colors.black.withValues(alpha: 0.06),
@@ -50,17 +49,23 @@ class MainScreen extends StatefulWidget {
 class _MainScreenState extends State<MainScreen> {
   int _currentIndex = 0;
 
-  final List<Widget> _screens = [
-    const BrowseScreen(),
-    const BookmarksScreen(),
-    const OutputsScreen(),
-    const HFChatScreen(),
-  ];
+  final Map<int, Widget> _screens = {0: const BrowseScreen()};
+
+  Widget _screenFor(int index) => switch (index) {
+    0 => const BrowseScreen(),
+    1 => const BookmarksScreen(),
+    2 => const OutputsScreen(),
+    _ => const HFChatScreen(),
+  };
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: _screens[_currentIndex],
+      body: IndexedStack(
+        index: _currentIndex,
+        children: List.generate(4, (index) =>
+          _screens[index] ?? const SizedBox.shrink()),
+      ),
       bottomNavigationBar: SafeArea(
         child: Padding(
           padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
@@ -76,6 +81,11 @@ class _MainScreenState extends State<MainScreen> {
                 selectedIndex: _currentIndex,
                 onDestinationSelected: (index) {
                   setState(() {
+                    if (index == 2 && index != _currentIndex) {
+                      _screens[index] = _screenFor(index);
+                    } else {
+                      _screens.putIfAbsent(index, () => _screenFor(index));
+                    }
                     _currentIndex = index;
                   });
                 },
@@ -83,22 +93,22 @@ class _MainScreenState extends State<MainScreen> {
                   NavigationDestination(
                     icon: Icon(Icons.explore_outlined),
                     selectedIcon: Icon(Icons.explore),
-                    label: 'Browse',
+                    label: 'Explorar',
                   ),
                   NavigationDestination(
                     icon: Icon(Icons.favorite_border),
                     selectedIcon: Icon(Icons.favorite),
-                    label: 'Favorites',
+                    label: 'Favoritos',
                   ),
                   NavigationDestination(
                     icon: Icon(Icons.outbox_outlined),
                     selectedIcon: Icon(Icons.outbox),
-                    label: 'Outputs',
+                    label: 'Resultados',
                   ),
                   NavigationDestination(
                     icon: Icon(Icons.chat_bubble_outline),
                     selectedIcon: Icon(Icons.chat_bubble),
-                    label: 'Chat',
+                    label: 'Conversa',
                   ),
                 ],
               ),

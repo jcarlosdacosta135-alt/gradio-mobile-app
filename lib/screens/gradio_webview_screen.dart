@@ -1,3 +1,4 @@
+import '../services/webview_permission_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -55,7 +56,7 @@ class _GradioWebViewScreenState extends State<GradioWebViewScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Saving ${data['file_name']}...'),
+            content: Text('Salvando ${data['file_name']}...'),
             duration: const Duration(seconds: 2),
             backgroundColor: Colors.blue,
           ),
@@ -79,11 +80,11 @@ class _GradioWebViewScreenState extends State<GradioWebViewScreen> {
 
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('✅ Saved ${savedFile.originalFileName}'),
+              content: Text('✅ Arquivo salvo: ${savedFile.originalFileName}'),
               duration: const Duration(seconds: 3),
               backgroundColor: Colors.green,
               action: SnackBarAction(
-                label: 'View',
+                label: 'Visualizar',
                 onPressed: () {
                   if (mounted) {
                     Navigator.of(context).push(
@@ -101,7 +102,7 @@ class _GradioWebViewScreenState extends State<GradioWebViewScreen> {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
-              content: Text('❌ Failed to save file'),
+              content: Text('❌ Não foi possível salvar o arquivo'),
               duration: Duration(seconds: 3),
               backgroundColor: Colors.red,
             ),
@@ -113,7 +114,7 @@ class _GradioWebViewScreenState extends State<GradioWebViewScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Error saving file: $e'),
+            content: Text('Erro ao salvar arquivo: $e'),
             duration: const Duration(seconds: 3),
             backgroundColor: Colors.red,
           ),
@@ -152,16 +153,16 @@ class _GradioWebViewScreenState extends State<GradioWebViewScreen> {
           hasError = true;
           switch (result.toString().replaceAll('"', '')) {
             case 'space_error':
-              errorMessage = 'Space is currently experiencing issues';
+              errorMessage = 'O Space está com problemas';
               break;
             case 'not_found':
-              errorMessage = 'Space not found';
+              errorMessage = 'Space não encontrado';
               break;
             case 'building':
-              errorMessage = 'Space is starting up';
+              errorMessage = 'O Space está iniciando';
               break;
             default:
-              errorMessage = 'Unable to load space';
+              errorMessage = 'Não foi possível carregar o Space';
           }
         });
       }
@@ -195,8 +196,8 @@ class _GradioWebViewScreenState extends State<GradioWebViewScreen> {
               Navigator.pushNamed(context, '/outputs');
             },
             tooltip: pendingDownloadsCount > 0
-                ? '$pendingDownloadsCount file${pendingDownloadsCount == 1 ? '' : 's'} saved'
-                : 'Download files to save them',
+                ? '$pendingDownloadsCount arquivo${pendingDownloadsCount == 1 ? '' : 's'} salvo${pendingDownloadsCount == 1 ? '' : 's'}'
+                : 'Baixe os arquivos para salvá-los',
           ),
         ],
         toolbarHeight: 56,
@@ -270,28 +271,10 @@ class _GradioWebViewScreenState extends State<GradioWebViewScreen> {
                 return;
               }
             },
-            onPermissionRequest: (controller, request) async {
-              print('🔐 Permission request: ${request.resources}');
-              return PermissionResponse(
-                resources: request.resources,
-                action: PermissionResponseAction.GRANT,
-              );
-            },
-            onReceivedServerTrustAuthRequest: (controller, challenge) async {
-
-              final host = challenge.protectionSpace.host;
-              if (host.endsWith('.hf.space') ||
-                  host.endsWith('huggingface.co') ||
-                  host.endsWith('.huggingface.co')) {
-                return ServerTrustAuthResponse(
-                  action: ServerTrustAuthResponseAction.PROCEED
-                );
-              }
-
-              return ServerTrustAuthResponse(
-                action: ServerTrustAuthResponseAction.CANCEL
-              );
-            },
+            onPermissionRequest: (controller, request) =>
+                requestWebMediaPermission(context, request, widget.space.url),
+            onReceivedServerTrustAuthRequest: (controller, challenge) async =>
+                ServerTrustAuthResponse(action: ServerTrustAuthResponseAction.CANCEL),
           ),
           if (isLoading)
             const Center(
@@ -313,7 +296,7 @@ class _GradioWebViewScreenState extends State<GradioWebViewScreen> {
                       ),
                       const SizedBox(height: 24),
                       Text(
-                        errorMessage ?? 'Failed to load space',
+                        errorMessage ?? 'Falha ao carregar o Space',
                         style: const TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.w600,
@@ -323,7 +306,7 @@ class _GradioWebViewScreenState extends State<GradioWebViewScreen> {
                       ),
                       const SizedBox(height: 16),
                       Text(
-                        'Please try again or check if the space is available at ${widget.space.url}',
+                        'Tente novamente ou verifique se o Space está disponível em ${widget.space.url}',
                         style: TextStyle(
                           fontSize: 14,
                           color: Colors.grey[600],
@@ -343,7 +326,7 @@ class _GradioWebViewScreenState extends State<GradioWebViewScreen> {
                               controller?.reload();
                             },
                             icon: const Icon(Icons.refresh),
-                            label: const Text('Retry'),
+                            label: const Text('Tentar novamente'),
                             style: ElevatedButton.styleFrom(
                               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
                             ),
@@ -356,7 +339,7 @@ class _GradioWebViewScreenState extends State<GradioWebViewScreen> {
                               }
                             },
                             icon: const Icon(Icons.open_in_browser),
-                            label: const Text('Open in Browser'),
+                            label: const Text('Abrir no navegador'),
                             style: OutlinedButton.styleFrom(
                               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
                             ),
